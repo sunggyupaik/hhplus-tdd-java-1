@@ -36,6 +36,7 @@ class PointServiceTest {
     private static final long EXISTED_POINT_2_ID = 2L;
     private static final long AMOUNT_3000 = 3000L;
     private static final long AMOUNT_5000 = 5000L;
+    private static final long AMOUNT_8000 = 8000L;
     private static final TransactionType TRANSACTION_TYPE_CHARGE = TransactionType.CHARGE;
 
     private UserPoint userPoint;
@@ -44,14 +45,14 @@ class PointServiceTest {
 
     @BeforeEach
     public void setup() {
-        userPoint = new UserPoint(EXISTED_USER_ID, POINT_3000, SYSTEM_CURRENT_TIME_MILLIS);
+        userPoint = new UserPoint(EXISTED_USER_ID, AMOUNT_8000, SYSTEM_CURRENT_TIME_MILLIS);
 
         pointHistory_1 = new PointHistory(EXISTED_POINT_1_ID, EXISTED_USER_ID, AMOUNT_3000,
                 TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
         pointHistory_2 = new PointHistory(EXISTED_POINT_2_ID, EXISTED_USER_ID, AMOUNT_5000,
                 TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
 
-        userPointTable.insertOrUpdate(EXISTED_USER_ID, POINT_3000);
+        userPointTable.insertOrUpdate(EXISTED_USER_ID, AMOUNT_8000);
         pointHistoryTable.insert(EXISTED_USER_ID, AMOUNT_3000, TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
         pointHistoryTable.insert(EXISTED_USER_ID, AMOUNT_5000, TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
     }
@@ -89,5 +90,14 @@ class PointServiceTest {
         List<PointHistory> pointHistories = pointService.listsAllPointHistory(NOT_EXISTED_USER_ID);
 
         assertThat(pointHistories).hasSize(0);
+    }
+
+    @Test
+    @DisplayName("주어진 유저 식별자와 금액으로 해당 유저의 포인트를 충전하고 반환한다")
+    void chargePointWithExistedId() {
+        UserPoint baseUserPoint = pointService.detailUserPoint(EXISTED_USER_ID);
+        UserPoint chargedUserPoint = pointService.chargeUserPoint(EXISTED_USER_ID, AMOUNT_3000);
+
+        assertThat(baseUserPoint.point() + AMOUNT_3000).isEqualTo(chargedUserPoint.point());
     }
 }

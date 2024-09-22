@@ -2,6 +2,7 @@ package io.hhplus.tdd.point;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
+import io.hhplus.tdd.exception.ExceededBalanceException;
 import io.hhplus.tdd.exception.InsufficientBalanceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -122,5 +123,16 @@ class PointServiceTest {
                 () -> pointService.useUserPoint(EXISTED_USER_ID, AMOUNT_10000L)
         )
                 .isInstanceOf(InsufficientBalanceException.class);
+    }
+
+    @Test
+    @DisplayName("주어진 유저 식별자와 금액으로 해당 유저의 포인트 충전이 최대를 초과하면 잔고 초과 예외를 반환한다.")
+    void chargePointMoreThanMax() {
+        UserPoint baseUserPoint = pointService.detailUserPoint(EXISTED_USER_ID);
+
+        assertThatThrownBy(
+                () -> pointService.chargeUserPoint(EXISTED_USER_ID, AMOUNT_10000L)
+        )
+                .isInstanceOf(ExceededBalanceException.class);
     }
 }

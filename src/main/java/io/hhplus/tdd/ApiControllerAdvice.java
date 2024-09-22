@@ -1,5 +1,6 @@
 package io.hhplus.tdd;
 
+import io.hhplus.tdd.exception.ExceededBalanceException;
 import io.hhplus.tdd.exception.InsufficientBalanceException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +16,11 @@ class ApiControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = InsufficientBalanceException.class)
     public ResponseEntity<ErrorResponse> handleInsufficientBalanceException(Exception e) {
+        return ResponseEntity.status(400).body(new ErrorResponse("400", e.getMessage()));
+    }
+
+    @ExceptionHandler(value = ExceededBalanceException.class)
+    public ResponseEntity<ErrorResponse> handleExceededBalanceException(Exception e) {
         return ResponseEntity.status(400).body(new ErrorResponse("400", e.getMessage()));
     }
 }

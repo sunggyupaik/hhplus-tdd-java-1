@@ -100,4 +100,13 @@ class PointServiceTest {
 
         assertThat(baseUserPoint.point() + AMOUNT_3000).isEqualTo(chargedUserPoint.point());
     }
+
+    @Test
+    @DisplayName("주어진 유저 식별자와 금액으로 해당 유저의 포인트를 차감하고 반환한다")
+    void usePointWithExistedId() {
+        UserPoint baseUserPoint = pointService.detailUserPoint(EXISTED_USER_ID);
+        UserPoint chargedUserPoint = pointService.useUserPoint(EXISTED_USER_ID, AMOUNT_3000);
+
+        assertThat(baseUserPoint.point() - AMOUNT_3000).isEqualTo(chargedUserPoint.point());
+    }
 }

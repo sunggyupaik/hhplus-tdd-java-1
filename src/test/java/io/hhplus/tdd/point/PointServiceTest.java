@@ -2,6 +2,7 @@ package io.hhplus.tdd.point;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
+import io.hhplus.tdd.exception.InsufficientBalanceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 class PointServiceTest {
@@ -37,6 +39,7 @@ class PointServiceTest {
     private static final long AMOUNT_3000 = 3000L;
     private static final long AMOUNT_5000 = 5000L;
     private static final long AMOUNT_8000 = 8000L;
+    private static final long AMOUNT_10000L = 10000L;
     private static final TransactionType TRANSACTION_TYPE_CHARGE = TransactionType.CHARGE;
 
     private UserPoint userPoint;
@@ -108,5 +111,16 @@ class PointServiceTest {
         UserPoint chargedUserPoint = pointService.useUserPoint(EXISTED_USER_ID, AMOUNT_3000);
 
         assertThat(baseUserPoint.point() - AMOUNT_3000).isEqualTo(chargedUserPoint.point());
+    }
+
+    @Test
+    @DisplayName("주어진 유저 식별자와 금액으로 해당 유저의 포인트 차감이 0원 미만이면 잔고 부족 예외를 반환한다.")
+    void usePointLessThanZero() {
+        UserPoint baseUserPoint = pointService.detailUserPoint(EXISTED_USER_ID);
+
+        assertThatThrownBy(
+                () -> pointService.useUserPoint(EXISTED_USER_ID, AMOUNT_10000L)
+        )
+                .isInstanceOf(InsufficientBalanceException.class);
     }
 }

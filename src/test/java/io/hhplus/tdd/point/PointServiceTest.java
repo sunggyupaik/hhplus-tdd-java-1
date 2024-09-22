@@ -82,4 +82,12 @@ class PointServiceTest {
         assertThat(pointHistories).hasSize(2);
         assertThat(pointHistories).contains(pointHistory_1, pointHistory_2);
     }
+
+    @Test
+    @DisplayName("주어진 유저 식별자에 해당하는 포인트 내역이 없으면 빈 목록을 반환한다")
+    void listsAllPointHistoryWithNotExistedId() {
+        List<PointHistory> pointHistories = pointService.listsAllPointHistory(NOT_EXISTED_USER_ID);
+
+        assertThat(pointHistories).hasSize(0);
+    }
 }

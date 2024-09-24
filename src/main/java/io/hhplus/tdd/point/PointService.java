@@ -10,9 +10,6 @@ import java.util.List;
 
 @Service
 public class PointService {
-    public static final long ZERO = 0L;
-    public static final long MAX_BALANCE = 10000L;
-
     private final UserPointTable userPointTable;
     private final PointHistoryTable pointHistoryTable;
 
@@ -28,19 +25,13 @@ public class PointService {
 
     public UserPoint chargeUserPoint(long id, long amount) {
         UserPoint userPoint = detailUserPoint(id);
-        long chargedPoint = userPoint.point() + amount;
-        if (chargedPoint > MAX_BALANCE) {
-            throw new ExceededBalanceException(id, userPoint.point(), amount);
-        }
+        long chargedPoint = userPoint.charge(amount);
         return userPointTable.insertOrUpdate(id, chargedPoint);
     }
 
     public UserPoint useUserPoint(long id, long amount) {
         UserPoint userPoint = detailUserPoint(id);
-        long leftPoint = userPoint.point() - amount;
-        if (leftPoint < ZERO) {
-            throw new InsufficientBalanceException(id, userPoint.point(), amount);
-        }
+        long leftPoint = userPoint.use(amount);
         return userPointTable.insertOrUpdate(id, leftPoint);
     }
 

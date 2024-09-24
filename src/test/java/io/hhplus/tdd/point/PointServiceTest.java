@@ -31,12 +31,13 @@ class PointServiceTest {
 
     private static final long EXISTED_USER_ID = 10L;
     private static final long NOT_EXISTED_USER_ID = 99L;
-    private static final long POINT_3000 = 3000L;
+    private static final long POINT_5000 = 5000L;
     private static final long POINT_0 = 0L;
     private static final long SYSTEM_CURRENT_TIME_MILLIS = 3000L;
 
     private static final long EXISTED_POINT_1_ID = 1L;
     private static final long EXISTED_POINT_2_ID = 2L;
+    private static final long AMOUNT_2000 = 3000L;
     private static final long AMOUNT_3000 = 3000L;
     private static final long AMOUNT_5000 = 5000L;
     private static final long AMOUNT_8000 = 8000L;
@@ -55,19 +56,17 @@ class PointServiceTest {
                 TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
         pointHistory_2 = new PointHistory(EXISTED_POINT_2_ID, EXISTED_USER_ID, AMOUNT_5000,
                 TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
-
-        userPointTable.insertOrUpdate(EXISTED_USER_ID, AMOUNT_8000);
-        pointHistoryTable.insert(EXISTED_USER_ID, AMOUNT_3000, TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
-        pointHistoryTable.insert(EXISTED_USER_ID, AMOUNT_5000, TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
     }
 
     @Test
     @DisplayName("주어진 유저 식별자에 해당하는 유저 포인트를 조회하여 반환한다")
     void detailUserPointWithExistedId() {
+        createUserPoint();
+
         UserPoint detailedUserPoint = pointService.detailUserPoint(EXISTED_USER_ID);
 
         assertThat(detailedUserPoint.id()).isEqualTo(EXISTED_USER_ID);
-        assertThat(detailedUserPoint.point()).isEqualTo(POINT_3000);
+        assertThat(detailedUserPoint.point()).isEqualTo(POINT_5000);
     }
 
     @Test
@@ -82,6 +81,8 @@ class PointServiceTest {
     @Test
     @DisplayName("주어진 유저 식별자에 해당하는 포인트 내역을 조회하여 목록을 반환한다")
     void listsAllPointHistoryWithExistedId() {
+        createPointHistories();
+
         List<PointHistory> pointHistories = pointService.listsAllPointHistory(EXISTED_USER_ID);
 
         assertThat(pointHistories).hasSize(2);
@@ -99,8 +100,10 @@ class PointServiceTest {
     @Test
     @DisplayName("주어진 유저 식별자와 금액으로 해당 유저의 포인트를 충전하고 반환한다")
     void chargePointWithExistedId() {
+        createUserPoint();
+
         UserPoint baseUserPoint = pointService.detailUserPoint(EXISTED_USER_ID);
-        UserPoint chargedUserPoint = pointService.chargeUserPoint(EXISTED_USER_ID, AMOUNT_3000);
+        UserPoint chargedUserPoint = pointService.chargeUserPoint(EXISTED_USER_ID, AMOUNT_2000);
 
         assertThat(baseUserPoint.point() + AMOUNT_3000).isEqualTo(chargedUserPoint.point());
     }
@@ -108,6 +111,8 @@ class PointServiceTest {
     @Test
     @DisplayName("주어진 유저 식별자와 금액으로 해당 유저의 포인트를 차감하고 반환한다")
     void usePointWithExistedId() {
+        createUserPoint();
+
         UserPoint baseUserPoint = pointService.detailUserPoint(EXISTED_USER_ID);
         UserPoint chargedUserPoint = pointService.useUserPoint(EXISTED_USER_ID, AMOUNT_3000);
 
@@ -117,6 +122,8 @@ class PointServiceTest {
     @Test
     @DisplayName("주어진 유저 식별자와 금액으로 해당 유저의 포인트 차감이 0원 미만이면 잔고 부족 예외를 반환한다.")
     void usePointLessThanZero() {
+        createUserPoint();
+
         UserPoint baseUserPoint = pointService.detailUserPoint(EXISTED_USER_ID);
 
         assertThatThrownBy(
@@ -128,11 +135,22 @@ class PointServiceTest {
     @Test
     @DisplayName("주어진 유저 식별자와 금액으로 해당 유저의 포인트 충전이 최대를 초과하면 잔고 초과 예외를 반환한다.")
     void chargePointMoreThanMax() {
+        createUserPoint();
+
         UserPoint baseUserPoint = pointService.detailUserPoint(EXISTED_USER_ID);
 
         assertThatThrownBy(
                 () -> pointService.chargeUserPoint(EXISTED_USER_ID, AMOUNT_10000L)
         )
                 .isInstanceOf(ExceededBalanceException.class);
+    }
+
+    private void createUserPoint() {
+        userPointTable.insertOrUpdate(EXISTED_USER_ID, POINT_5000);
+    }
+
+    private void createPointHistories() {
+        pointHistoryTable.insert(EXISTED_USER_ID, AMOUNT_3000, TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
+        pointHistoryTable.insert(EXISTED_USER_ID, AMOUNT_5000, TRANSACTION_TYPE_CHARGE, SYSTEM_CURRENT_TIME_MILLIS);
     }
 }

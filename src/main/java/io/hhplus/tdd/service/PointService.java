@@ -1,8 +1,11 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.service;
 
 import io.hhplus.tdd.database.PointHistoryTable;
 import io.hhplus.tdd.database.UserPointTable;
-import io.hhplus.tdd.util.UserLock;
+import io.hhplus.tdd.common.util.UserLock;
+import io.hhplus.tdd.domain.point.PointHistory;
+import io.hhplus.tdd.domain.point.TransactionType;
+import io.hhplus.tdd.domain.point.UserPoint;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

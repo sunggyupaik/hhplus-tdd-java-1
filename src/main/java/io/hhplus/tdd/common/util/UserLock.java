@@ -1,4 +1,4 @@
-package io.hhplus.tdd.util;
+package io.hhplus.tdd.common.util;
 
 import org.springframework.stereotype.Component;
 

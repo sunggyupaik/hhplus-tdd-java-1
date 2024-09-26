@@ -1,4 +1,4 @@
-package io.hhplus.tdd.exception;
+package io.hhplus.tdd.common.exception;
 
 public class InsufficientBalanceException extends RuntimeException {
     public InsufficientBalanceException(long id, long point, long amount) {

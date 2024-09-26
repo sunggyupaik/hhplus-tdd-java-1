@@ -1,7 +1,7 @@
-package io.hhplus.tdd.point;
+package io.hhplus.tdd.domain.point;
 
-import io.hhplus.tdd.exception.ExceededBalanceException;
-import io.hhplus.tdd.exception.InsufficientBalanceException;
+import io.hhplus.tdd.common.exception.ExceededBalanceException;
+import io.hhplus.tdd.common.exception.InsufficientBalanceException;
 
 public record UserPoint(
         long id,

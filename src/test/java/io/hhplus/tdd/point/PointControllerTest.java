@@ -1,9 +1,13 @@
 package io.hhplus.tdd.point;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.hhplus.tdd.exception.ExceededBalanceException;
-import io.hhplus.tdd.exception.InsufficientBalanceException;
+import io.hhplus.tdd.common.exception.ExceededBalanceException;
+import io.hhplus.tdd.common.exception.InsufficientBalanceException;
+import io.hhplus.tdd.controller.PointController;
+import io.hhplus.tdd.domain.point.PointHistory;
+import io.hhplus.tdd.domain.point.TransactionType;
+import io.hhplus.tdd.domain.point.UserPoint;
+import io.hhplus.tdd.service.PointService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
